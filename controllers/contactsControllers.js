@@ -20,7 +20,6 @@ export const getContactById = async (req, res, next) => {
 
     const result = await contactsService.getContactById(id);
     console.log(result);
-
     if (!result) {
       throw HttpError(404, "Not found ");
     }
@@ -82,6 +81,11 @@ export const updateContact = async (req, res, next) => {
     }
 
     const result = await contactsService.updateContact(id, req.body);
+
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+
     res.status(200).json(result);
   } catch (error) {
     next(error);
