@@ -1,10 +1,13 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import dotenv from "dotenv";
 
 import contactsRouter from "./routes/contactsRouter.js";
 
 export const app = express();
+
+dotenv.config();
 
 app.use(morgan("tiny"));
 app.use(cors());
