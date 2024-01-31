@@ -41,7 +41,7 @@ export const deleteContact = async (req, res, next) => {
       throw HttpError(404, "Not found");
     }
 
-    res.status(200).json({ result, message: "Deleted successfully!" });
+    res.status(200).json({ result });
   } catch (error) {
     next(error);
   }
