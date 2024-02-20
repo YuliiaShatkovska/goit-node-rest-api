@@ -5,16 +5,20 @@ import path from "path";
 import gravatar from "gravatar";
 import Jimp from "jimp";
 import fs from "fs/promises";
+import { nanoid } from "nanoid";
 
 import { User } from "../models/users.js";
 import HttpError from "../helpers/HttpError.js";
+import { sendEmail } from "../helpers/sendEmail.js";
 import {
   userCheckSchema,
   updateSubscriptionSchema,
+  emailValidateSchema,
 } from "../schemas/usersSchemas.js";
 
 dotenv.config();
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
+
 const avatarDir = path.resolve("public", "avatars");
 
 export const registerUser = async (req, res, next) => {
@@ -37,11 +41,22 @@ export const registerUser = async (req, res, next) => {
 
     const avatarURL = gravatar.url(email);
 
+    const verificationToken = nanoid();
+
     const newUser = await User.create({
       ...req.body,
       password: hashedPassword,
       avatarURL,
+      verificationToken,
     });
+
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify your email</a>`,
+    };
+
+    await sendEmail(verifyEmail);
 
     res.status(201).json({
       user: {
@@ -49,6 +64,64 @@ export const registerUser = async (req, res, next) => {
         subscription: newUser.subscription,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+
+    if (!user) {
+      throw HttpError(404, "User not found!");
+    }
+
+    await User.findByIdAndUpdate(user.id, {
+      verify: true,
+      verificationToken: null,
+    });
+
+    res.status(200).json({
+      message: "Verification successful!",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendVerification = async (req, res, next) => {
+  try {
+    const { error } = emailValidateSchema.validate(req.body);
+
+    if (error) {
+      throw HttpError(400, error.message);
+    }
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw HttpError(401, "User not found");
+    }
+
+    if (user.verify) {
+      throw HttpError(400, "Verification has already been passed");
+    }
+
+    const verifyEmail = {
+      to: email,
+      subject: "Verify email",
+      html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${user.verificationToken}">Click to verify your email</a>`,
+    };
+
+    res.status(200).json({
+      message: "Verification email sent",
+    });
+
+    await sendEmail(verifyEmail);
   } catch (error) {
     next(error);
   }
@@ -68,6 +141,10 @@ export const loginUser = async (req, res, next) => {
 
     if (!user) {
       throw HttpError(401, "Email or password is wrong");
+    }
+
+    if (!user.verify) {
+      throw HttpError(401, "Email not verified");
     }
 
     const passwordCompare = await bcrypt.compare(password, user.password);

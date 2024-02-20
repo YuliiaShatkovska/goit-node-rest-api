@@ -5,8 +5,10 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  resendVerification,
   updateAvatar,
   updateSubscription,
+  verifyEmail,
 } from "../controllers/usersController.js";
 import { checkToken } from "../middlewares/checkToken.js";
 import { upload } from "../middlewares/upload.js";
@@ -14,6 +16,10 @@ import { upload } from "../middlewares/upload.js";
 const usersRouter = express.Router();
 
 usersRouter.post("/register", registerUser);
+
+usersRouter.get("/verify/:verificationToken", verifyEmail);
+
+usersRouter.post("/verify", resendVerification);
 
 usersRouter.post("/login", loginUser);
 
