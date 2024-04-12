@@ -10,14 +10,6 @@ import { User } from "../models/users.js";
 import HttpError from "../helpers/HttpError.js";
 import {
   userCheckSchema,
-<<<<<<< Updated upstream
-  updateSubscriptionSchema,
-} from "../schemas/usersSchemas.js";
-
-dotenv.config();
-const { SECRET_KEY } = process.env;
-const avatarDir = path.resolve("public", "avatars");
-=======
   // updateSubscriptionSchema,
   // emailValidateSchema,
 } from "../schemas/usersSchemas.js";
@@ -26,7 +18,6 @@ dotenv.config();
 const { SECRET_KEY, BASE_URL } = process.env;
 
 // const avatarDir = path.resolve("public", "avatars");
->>>>>>> Stashed changes
 
 export const registerUser = async (req, res, next) => {
   try {
@@ -48,14 +39,6 @@ export const registerUser = async (req, res, next) => {
 
     const avatarURL = gravatar.url(email);
 
-<<<<<<< Updated upstream
-    const newUser = await User.create({
-      ...req.body,
-      password: hashedPassword,
-      avatarURL,
-    });
-
-=======
     // const verificationToken = nanoid();
 
     const newUser = await User.create({
@@ -73,7 +56,6 @@ export const registerUser = async (req, res, next) => {
 
     // await sendEmail(verifyEmail);
 
->>>>>>> Stashed changes
     res.status(201).json({
       user: {
         email: newUser.email,
@@ -86,8 +68,6 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
-<<<<<<< Updated upstream
-=======
 // export const verifyEmail = async (req, res, next) => {
 //   try {
 //     const { verificationToken } = req.params;
@@ -146,7 +126,6 @@ export const registerUser = async (req, res, next) => {
 //   }
 // };
 
->>>>>>> Stashed changes
 export const loginUser = async (req, res, next) => {
   try {
     const { error } = userCheckSchema.validate(req.body);
@@ -163,13 +142,10 @@ export const loginUser = async (req, res, next) => {
       throw HttpError(401, "Email or password is wrong");
     }
 
-<<<<<<< Updated upstream
-=======
     // if (!user.verify) {
     //   throw HttpError(401, "Email not verified");
     // }
 
->>>>>>> Stashed changes
     const passwordCompare = await bcrypt.compare(password, user.password);
 
     if (!passwordCompare) {

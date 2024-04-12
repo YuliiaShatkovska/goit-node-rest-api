@@ -13,16 +13,6 @@ export const userCheckSchema = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business"),
 });
 
-<<<<<<< Updated upstream
-export const updateSubscriptionSchema = Joi.object({
-  subscription: Joi.string()
-    .valid("starter", "pro", "business")
-    .required()
-    .messages({
-      "any.required": "Subscription is required",
-    }),
-});
-=======
 // export const updateSubscriptionSchema = Joi.object({
 //   subscription: Joi.string()
 //     .valid("starter", "pro", "business")
@@ -38,4 +28,3 @@ export const updateSubscriptionSchema = Joi.object({
 //     .messages({ "any.required": "Missing required email field" })
 //     .email(),
 // });
->>>>>>> Stashed changes
