@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import path from "path";
-import gravatar from "gravatar";
-import Jimp from "jimp";
-import fs from "fs/promises";
+// import path from "path";
+// import gravatar from "gravatar";
+// import Jimp from "jimp";
+// import fs from "fs/promises";
 
 import { User } from "../models/users.js";
 import HttpError from "../helpers/HttpError.js";
@@ -15,7 +15,7 @@ import {
 } from "../schemas/usersSchemas.js";
 
 dotenv.config();
-const { SECRET_KEY, BASE_URL } = process.env;
+const { SECRET_KEY } = process.env;
 
 // const avatarDir = path.resolve("public", "avatars");
 
@@ -37,7 +37,7 @@ export const registerUser = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const avatarURL = gravatar.url(email);
+    // const avatarURL = gravatar.url(email);
 
     // const verificationToken = nanoid();
 
