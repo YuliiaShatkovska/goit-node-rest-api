@@ -175,10 +175,11 @@ export const loginUser = async (req, res, next) => {
 
 export const getCurrent = async (req, res, next) => {
   try {
-    const user = req.user;
+    const { name, email } = req.user;
 
     res.json({
-      user,
+      name,
+      email,
     });
   } catch (error) {
     next(error);
